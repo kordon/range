@@ -1,0 +1,26 @@
+[
+  {
+    "document": "a",
+    "countries": ["Australia", "Canada", "Portugal"]
+  },
+  {
+    "document": "b",
+    "countries": ["Canada", "Portugal", "Togo"]
+  },
+  {
+    "document": "c",
+    "countries": ["Algeria", "Canada", "Portugal", "Togo"]
+  },
+  {
+    "document": "d",
+    "countries": ["Algeria", "Canada", "Togo"]
+  },
+  {
+    "document": "e",
+    "countries": ["Canada", "Togo"]
+  },
+  {
+    "document": "f",
+    "countries": ["Togo"]
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "name": "range-index",
+  "version": "0.1.0",
+  "description": "levelup based range index",
+  "main": "src/range.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:kordon/range.git"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/mocha -u qunit -R spec -t 6000"
+  },
+  "keywords": [
+    "range",
+    "index"
+  ],
+  "author": "Sérgio Ramos <mail@sergioramos.me>",
+  "license": "MIT",
+  "dependencies": {
+    "type-component": "0.0.x",
+    "through": "2.1.x",
+    "levelup": "0.4.x",
+    "lodash": "1.0.x",
+    "async": "0.1.x"
+  },
+  "devDependencies": {
+    "mocha": "1.7.x",
+    "chai": "1.4.x",
+    "sgen": "0.1.x"
+  }
+}
