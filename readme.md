@@ -115,71 +115,44 @@ user.on('end', function () {
 });
 ```
 
+with [kordon/cursor](https://github.com/kordon/cursor):
+
+```js
+age.get(18).pipe(cursor.all(function (e, data) {
+  assert.equal(e,  null);
+  assert(data[0].value == [3, 7]);
+  assert(data[0].key == 18);
+}));
+```
+
 ----
 
 ```js
-var country = countries.get('Portugal');
-
-user.on('data', function (data) {
+countries.get('Portugal').pipe(cursor.all(function (e, data) {
+  assert.equal(e,  null);
   assert(data.value == ['A', 'B', 'C']);
   assert(data.key == 'Portugal');
-});
-
-user.on('error', function (e) {
-  throw e;
-});
-
-user.on('close', function () {
-  console.log('Stream closed')
-});
-
-user.on('end', function () {
-  console.log('Stream closed')
-});
+}));
 ```
 
-### index.all()
+### `stream` index.all()
 
 ```js
-var users = age.all();
-
-users.on('data', function (data) {
-  console.log('Age: ', data.key, 'ID\'s: ', data.value)
-});
-
-user.on('error', function (e) {
-  throw e;
-});
-
-user.on('close', function () {
-  console.log('Stream closed')
-});
-
-user.on('end', function () {
-  console.log('Stream closed')
-});
+age.all().pipe(cursor.each(function (data) {
+  console.log('Age: ', data.key, 'ID\'s: ', data.value);
+}, function (e) {
+  assert.equal(e,  null);
+}));
 ```
 
-### index.from(start)
+### `stream` index.from(start)
 
 ```js
-var users = age.from(54);
-
-users.on('data', function (data) {
-  console.log('Age: ', data.key, 'ID\'s: ', data.value)
-});
-
-user.on('error', function (e) {
-  throw e;
-});
-
-user.on('close', function () {
-  console.log('Stream closed')
-});
-
-user.on('end', function () {
-  console.log('Stream closed')
-});
+age.from(54).pipe(cursor.each(function (data) {
+  console.log('Age: ', data.key, 'ID\'s: ', data.value);
+}, function (e) {
+  assert.equal(e,  null);
+}));
 ```
 
 returned indexes:
@@ -192,23 +165,11 @@ returned indexes:
 ----
 
 ```js
-var from_countries = countries.from('P');
-
-from_countries.on('data', function (data) {
-  console.log('Age: ', data.key, 'ID\'s: ', data.value)
-});
-
-from_countries.on('error', function (e) {
-  throw e;
-});
-
-from_countries.on('close', function () {
-  console.log('Stream closed')
-});
-
-from_countries.on('end', function () {
-  console.log('Stream closed')
-});
+countries.from('P').pipe(cursor.each(function (data) {
+  console.log('Country: ', data.key, 'Documents: ', data.value);
+}, function (e) {
+  assert.equal(e,  null);
+}));
 ```
 
 returned indexes:
@@ -218,26 +179,14 @@ returned indexes:
 |  Portugal |      `A`, `B`, `C`      |
 |    Togo   | `B`, `C`, `D`, `E`, `F` |
 
-### index.between(start, end)
+### `stream` index.between(start, end)
 
 ```js
-var users = age.between(13, 23);
-
-users.on('data', function (data) {
-  console.log('Age: ', data.key, 'ID\'s: ', data.value)
-});
-
-user.on('error', function (e) {
-  throw e;
-});
-
-user.on('close', function () {
-  console.log('Stream closed')
-});
-
-user.on('end', function () {
-  console.log('Stream closed')
-});
+age.between(13, 23).pipe(cursor.each(function (data) {
+  console.log('Age: ', data.key, 'ID\'s: ', data.value);
+}, function (e) {
+  assert.equal(e,  null);
+}));
 ```
 
 returned indexes:
@@ -251,23 +200,11 @@ returned indexes:
 ----
 
 ```js
-var between_countries = countries.between('A', 'C');
-
-from_countries.on('data', function (data) {
-  console.log('Age: ', data.key, 'ID\'s: ', data.value)
-});
-
-from_countries.on('error', function (e) {
-  throw e;
-});
-
-from_countries.on('close', function () {
-  console.log('Stream closed')
-});
-
-from_countries.on('end', function () {
-  console.log('Stream closed')
-});
+countries.between('A', 'C').pipe(cursor.each(function (data) {
+  console.log('Country: ', data.key, 'Documents: ', data.value);
+}, function (e) {
+  assert.equal(e,  null);
+}));
 ```
 
 returned indexes:
@@ -277,26 +214,14 @@ returned indexes:
 |  Algeria  |         `C`, `D`        |
 | Australia |           `A`           |
 
-### index.until(end)
+### `stream` index.until(end)
 
 ```js
-var users = age.until(18);
-
-users.on('data', function (data) {
-  console.log('Age: ', data.key, 'ID\'s: ', data.value)
-});
-
-user.on('error', function (e) {
-  throw e;
-});
-
-user.on('close', function () {
-  console.log('Stream closed')
-});
-
-user.on('end', function () {
-  console.log('Stream closed')
-});
+age.until(18).pipe(cursor.each(function (data) {
+  console.log('Age: ', data.key, 'ID\'s: ', data.value);
+}, function (e) {
+  assert.equal(e,  null);
+}));
 ```
 
 returned indexes:
@@ -310,23 +235,11 @@ returned indexes:
 ----
 
 ```js
-var from_countries = countries.until('P');
-
-from_countries.on('data', function (data) {
-  console.log('Age: ', data.key, 'ID\'s: ', data.value)
-});
-
-from_countries.on('error', function (e) {
-  throw e;
-});
-
-from_countries.on('close', function () {
-  console.log('Stream closed')
-});
-
-from_countries.on('end', function () {
-  console.log('Stream closed')
-});
+countries.until('P').pipe(cursor.each(function (data) {
+  console.log('Country: ', data.key, 'Documents: ', data.value);
+}, function (e) {
+  assert.equal(e,  null);
+}));
 ```
 
 returned indexes:
