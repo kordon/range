@@ -245,7 +245,6 @@ test('del', function (callback) {
   age.del(18, 3, function (e) {
     assert.equal(e,  null)
     age.get(18).pipe(cursor.all(function (keys, values, data) {
-      console.log(arguments);
       expect(data[18]).to.not.include(3)
       expect(values).to.not.include(3)
       age.close(callback)
