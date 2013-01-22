@@ -1,14 +1,14 @@
-var hex = require('../src/hex'),
+var cursor = require('levelup-cursor'),
+    hex = require('../src/hex'),
     async = require('async'),
     chai = require('chai'),
     range = require('../'),
     path = require('path'),
     sgen = require('sgen')
 
-var expect = chai.expect
-var assert = chai.assert
-
-var root = path.join(path.dirname(__filename), 'dbs')
+var root = path.join(path.dirname(__filename), 'dbs'),
+    expect = chai.expect,
+    assert = chai.assert
 
 var forEach = function (len, callback) {
   for(var i = 0; i < len; i += 1) {
@@ -110,11 +110,15 @@ test('retrieved', function (callback) {
   var age = instance()
 
   age.put(12, sgen.random(), function () {
-    age.get(12).on('data', function (data) {
-      assert(data.key == 12)
-      assert(data.value instanceof Array)
-      assert(data.value.length == 1)
-    }).on('end', function () {
+    
+    cursor(age.get(12)).all(function (e, keys, values, data) {
+      assert.equal(e,  null)
+      assert(Object.keys(data).length == 1)
+      assert(data[keys[0]] == values[0])
+      assert(keys instanceof Array)
+      assert(values.length == 1)
+      assert(keys.length == 1)
+      assert(keys[0] == 12)
       age.close(callback)
     })
   })
@@ -136,15 +140,12 @@ test('order', function (callback) {
     assert.equal(e,  null)
     var positions = [random(), random(), random()].sort()
     var before = 0
-    age.all()
-    .on('data', function (data) {
-      assert(data.key >= before)
-      before = data.key
-    })
-    .on('error', function (e) {
+    
+    cursor(age.all()).each(function (key, value, data) {
+      assert(key >= before)
+      before = key
+    }, function (e) {
       assert.equal(e,  null)
-    })
-    .on('end', function () {
       age.close(callback)
     })
   })
@@ -153,8 +154,8 @@ test('order', function (callback) {
 suite('strings')
 
 test('order', function (callback) {
-  var countries = instance()
   var dataset = require('./documents.json')
+  var countries = instance()
   var keys = []
   
   async.forEachSeries(dataset, function (document, callback) {
@@ -163,14 +164,10 @@ test('order', function (callback) {
     }, callback)
   }, function (e) {
     assert.equal(e,  null)
-    countries.all()
-    .on('data', function (data) {
-      keys.push(data.key)
-    })
-    .on('error', function (e) {
+    cursor(countries.all()).each(function (key, value, data) {
+      keys.push(key)
+    }, function (e) {
       assert.equal(e,  null)
-    })
-    .on('end', function () {
       keys.forEach(function (value, i) {
         if(i == 0) return
         assert(value >= keys[i-1])
@@ -187,89 +184,72 @@ var users = require('./users.json')
 var age = instance()
 
 test('all', function (callback) {
-  var ages = {}
-  
   async.forEachSeries(users, function (user, callback) {
     age.put(user.age, user.id, callback)
   }, function () {
-    age.all()
-    .on('data', function (data) {
-      ages[data.key] = data.value
-    })
-    .on('error', function (e) {
+    cursor(age.all()).all(function (e, keys, values, data) {
       assert.equal(e,  null)
-    })
-    .on('end', function () {
-      expect(Object.keys(ages)).to.have.length(7)
-      expect(ages).to.have.keys('7', '13', '18', '23', '42', '54', '60')
-      expect(ages[7]).to.eql([1, 10])
-      expect(ages[60]).to.eql([4, 6])
-      expect(ages[18]).to.eql([3, 7])
-      expect(ages[13]).to.eql([8])
-      expect(ages[23]).to.eql([5])
-      expect(ages[42]).to.eql([9])
-      expect(ages[54]).to.eql([2])
+      expect(Object.keys(data)).to.have.length(7)
+      expect(data).to.have.keys('7', '13', '18', '23', '42', '54', '60')
+      expect(keys).to.eql([7, 13, 18, 23, 42, 54, 60])
+      expect(values).to.have.length(7)
+      expect(keys).to.have.length(7)
+      expect(data[7]).to.eql([1, 10])
+      expect(data[60]).to.eql([4, 6])
+      expect(data[18]).to.eql([3, 7])
+      expect(data[13]).to.eql([8])
+      expect(data[23]).to.eql([5])
+      expect(data[42]).to.eql([9])
+      expect(data[54]).to.eql([2])
       callback()
     })
   })
 })
 
 test('from', function (callback) {
-  var ages = {}
-  
-  age.from(54)
-  .on('data', function (data) {
-    ages[data.key] = data.value
-  })
-  .on('error', function (e) {
+  cursor(age.from(54)).all(function (e, keys, values, data) {
     assert.equal(e,  null)
-  })
-  .on('end', function () {
-    expect(Object.keys(ages)).to.have.length(2)
-    expect(ages).to.have.keys('54', '60')
-    expect(ages[60]).to.eql([4, 6])
-    expect(ages[54]).to.eql([2])
+    expect(Object.keys(data)).to.have.length(2)
+    expect(data).to.have.keys('54', '60')
+    expect(data[60]).to.eql([4, 6])
+    expect(data[54]).to.eql([2])
     callback()
   })
 })
 
 test('between', function (callback) {
-  var ages = {}
-  
-  age.between(13, 23)
-  .on('data', function (data) {
-    ages[data.key] = data.value
-  })
-  .on('error', function (e) {
+  cursor(age.between(13, 23)).all(function (e, keys, values, data) {
     assert.equal(e,  null)
-  })
-  .on('end', function () {
-    expect(Object.keys(ages)).to.have.length(3)
-    expect(ages).to.have.keys('13', '18', '23')
-    expect(ages[18]).to.eql([3, 7])
-    expect(ages[13]).to.eql([8])
-    expect(ages[23]).to.eql([5])
+    expect(Object.keys(data)).to.have.length(3)
+    expect(data).to.have.keys('13', '18', '23')
+    expect(data[18]).to.eql([3, 7])
+    expect(data[13]).to.eql([8])
+    expect(data[23]).to.eql([5])
     callback()
   })
 })
 
 test('until', function (callback) {
-  var ages = {}
-  
-  age.until(18)
-  .on('data', function (data) {
-    ages[data.key] = data.value
-  })
-  .on('error', function (e) {
+  cursor(age.until(18)).all(function (e, keys, values, data) {
     assert.equal(e,  null)
+    expect(Object.keys(data)).to.have.length(3)
+    expect(data).to.have.keys('7', '13', '18')
+    expect(data[7]).to.eql([1, 10])
+    expect(data[18]).to.eql([3, 7])
+    expect(data[13]).to.eql([8])
+    callback()
   })
-  .on('end', function () {
-    expect(Object.keys(ages)).to.have.length(3)
-    expect(ages).to.have.keys('7', '13', '18')
-    expect(ages[7]).to.eql([1, 10])
-    expect(ages[18]).to.eql([3, 7])
-    expect(ages[13]).to.eql([8])
-    age.close(callback)
+})
+
+test('del', function (callback) {
+  age.del(18, 3, function (e) {
+    assert.equal(e,  null)
+    age.get(18).pipe(cursor.all(function (keys, values, data) {
+      console.log(arguments);
+      expect(data[18]).to.not.include(3)
+      expect(values).to.not.include(3)
+      age.close(callback)
+    }))
   })
 })
 
@@ -279,8 +259,6 @@ var documents = require('./documents.json')
 var country = instance()
 
 test('all', function (callback) {
-  var countries = {}
-  
   async.forEachSeries(documents, function (document, callback) {
     async.forEachSeries(document.countries, function (c, callback) {
       country.put(c, document.document, callback)
@@ -288,80 +266,63 @@ test('all', function (callback) {
   }, function (e) {
     assert.equal(e,  null)
     
-    country.all()
-    .on('data', function (data) {
-      countries[data.key] = data.value
-    })
-    .on('error', function (e) {
+    cursor(country.all()).all(function (e, keys, values, data) {
       assert.equal(e,  null)
-    })
-    .on('end', function () {
-      expect(Object.keys(countries)).to.have.length(5)
-      expect(countries).to.have.keys('Algeria', 'Australia', 'Canada', 'Portugal', 'Togo')
-      expect(countries['Canada']).to.eql(['a', 'b', 'c', 'd', 'e'])
-      expect(countries['Togo']).to.eql(['b', 'c', 'd', 'e', 'f'])
-      expect(countries['Portugal']).to.eql(['a', 'b', 'c'])
-      expect(countries['Algeria']).to.eql(['c', 'd'])
-      expect(countries['Australia']).to.eql(['a'])
+      expect(Object.keys(data)).to.have.length(5)
+      expect(data).to.have.keys('Algeria', 'Australia', 'Canada', 'Portugal', 'Togo')
+      expect(data['Canada']).to.eql(['a', 'b', 'c', 'd', 'e'])
+      expect(data['Togo']).to.eql(['b', 'c', 'd', 'e', 'f'])
+      expect(data['Portugal']).to.eql(['a', 'b', 'c'])
+      expect(data['Algeria']).to.eql(['c', 'd'])
+      expect(data['Australia']).to.eql(['a'])
       callback()
     })
   })
 })
 
 test('from', function (callback) {
-  var countries = {}
-  
-  country.from('P')
-  .on('data', function (data) {
-    countries[data.key] = data.value
-  })
-  .on('error', function (e) {
+  cursor(country.from('P')).all(function (e, keys, values, data) {
     assert.equal(e,  null)
-  })
-  .on('end', function () {
-    expect(Object.keys(countries)).to.have.length(2)
-    expect(countries).to.have.keys('Portugal', 'Togo')
-    expect(countries['Togo']).to.eql(['b', 'c', 'd', 'e', 'f'])
-    expect(countries['Portugal']).to.eql(['a', 'b', 'c'])
+    expect(Object.keys(data)).to.have.length(2)
+    expect(data).to.have.keys('Portugal', 'Togo')
+    expect(data['Togo']).to.eql(['b', 'c', 'd', 'e', 'f'])
+    expect(data['Portugal']).to.eql(['a', 'b', 'c'])
     callback()
   })
 })
 
 test('between', function (callback) {
-  var countries = {}
-  
-  country.between('A', 'C')
-  .on('data', function (data) {
-    countries[data.key] = data.value
-  })
-  .on('error', function (e) {
+  cursor(country.between('A', 'C')).all(function (e, keys, values, data) {
     assert.equal(e,  null)
-  })
-  .on('end', function () {
-    expect(Object.keys(countries)).to.have.length(2)
-    expect(countries).to.have.keys('Algeria', 'Australia')
-    expect(countries['Algeria']).to.eql(['c', 'd'])
-    expect(countries['Australia']).to.eql(['a'])
+    expect(Object.keys(data)).to.have.length(2)
+    expect(data).to.have.keys('Algeria', 'Australia')
+    expect(data['Algeria']).to.eql(['c', 'd'])
+    expect(data['Australia']).to.eql(['a'])
     callback()
   })
 })
 
 test('until', function (callback) {
-  var countries = {}
-  
-  country.until('P')
-  .on('data', function (data) {
-    countries[data.key] = data.value
-  })
-  .on('error', function (e) {
+  cursor(country.until('P')).all(function (e, keys, values, data) {
     assert.equal(e,  null)
+    expect(Object.keys(data)).to.have.length(3)
+    expect(data).to.have.keys('Algeria', 'Australia', 'Canada')
+    expect(data['Canada']).to.eql(['a', 'b', 'c', 'd', 'e'])
+    expect(data['Algeria']).to.eql(['c', 'd'])
+    expect(data['Australia']).to.eql(['a'])
+    callback()
   })
-  .on('end', function () {
-    expect(Object.keys(countries)).to.have.length(3)
-    expect(countries).to.have.keys('Algeria', 'Australia', 'Canada')
-    expect(countries['Canada']).to.eql(['a', 'b', 'c', 'd', 'e'])
-    expect(countries['Algeria']).to.eql(['c', 'd'])
-    expect(countries['Australia']).to.eql(['a'])
-    country.close(callback)
+})
+
+test('del', function (callback) {
+  async.forEach(['Algeria', 'Canada', 'Portugal', 'Togo'], function (c, callback) {
+    country.del(c, 'c', callback)
+  }, function (e) {
+    assert.equal(e,  null)
+    country.get('Portugal').pipe(cursor.all(function (keys, values, data) {
+      expect(data['Portugal']).to.not.include('c')
+      expect(values).to.not.include('c')
+      country.close(callback)
+    }))
   })
 })

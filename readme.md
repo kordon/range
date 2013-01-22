@@ -118,40 +118,40 @@ user.on('end', function () {
 with [kordon/cursor](https://github.com/kordon/cursor):
 
 ```js
-age.get(18).pipe(cursor.all(function (e, data) {
+age.get(18).pipe(cursor.all(function (keys, values, data) {
   assert.equal(e,  null);
-  assert(data[0].value == [3, 7]);
-  assert(data[0].key == 18);
+  assert(values[0] == [3, 7]);
+  assert(keys[0] == 18);
 }));
 ```
 
 ----
 
 ```js
-countries.get('Portugal').pipe(cursor.all(function (e, data) {
+countries.get('Portugal').pipe(cursor.all(function (keys, values, data) {
   assert.equal(e,  null);
-  assert(data.value == ['A', 'B', 'C']);
-  assert(data.key == 'Portugal');
+  assert(values[0] == ['A', 'B', 'C']);
+  assert(key[0] == 'Portugal');
 }));
 ```
 
 ### `stream` index.all()
 
 ```js
-age.all().pipe(cursor.each(function (data) {
-  console.log('Age: ', data.key, 'ID\'s: ', data.value);
-}, function (e) {
-  assert.equal(e,  null);
+age.all().pipe(cursor.each(function (key, value, data) {
+  console.log('Age: ', key, 'ID\'s: ', value);
+}, function () {
+  // end
 }));
 ```
 
 ### `stream` index.from(start)
 
 ```js
-age.from(54).pipe(cursor.each(function (data) {
-  console.log('Age: ', data.key, 'ID\'s: ', data.value);
-}, function (e) {
-  assert.equal(e,  null);
+age.from(54).pipe(cursor.each(function (key, value, data) {
+  console.log('Age: ', key, 'ID\'s: ', value);
+}, function () {
+  // end
 }));
 ```
 
@@ -165,10 +165,10 @@ returned indexes:
 ----
 
 ```js
-countries.from('P').pipe(cursor.each(function (data) {
-  console.log('Country: ', data.key, 'Documents: ', data.value);
-}, function (e) {
-  assert.equal(e,  null);
+countries.from('P').pipe(cursor.each(function (key, value, data) {
+  console.log('Country: ', key, 'Documents: ', value);
+}, function () {
+  // end
 }));
 ```
 
@@ -182,10 +182,10 @@ returned indexes:
 ### `stream` index.between(start, end)
 
 ```js
-age.between(13, 23).pipe(cursor.each(function (data) {
-  console.log('Age: ', data.key, 'ID\'s: ', data.value);
-}, function (e) {
-  assert.equal(e,  null);
+age.between(13, 23).pipe(cursor.each(function (key, value, data) {
+  console.log('Age: ', key, 'ID\'s: ', value);
+}, function () {
+  // end
 }));
 ```
 
@@ -200,10 +200,10 @@ returned indexes:
 ----
 
 ```js
-countries.between('A', 'C').pipe(cursor.each(function (data) {
-  console.log('Country: ', data.key, 'Documents: ', data.value);
-}, function (e) {
-  assert.equal(e,  null);
+countries.between('A', 'C').pipe(cursor.each(function (key, value, data) {
+  console.log('Country: ', key, 'Documents: ', value);
+}, function () {
+  // end
 }));
 ```
 
@@ -217,10 +217,10 @@ returned indexes:
 ### `stream` index.until(end)
 
 ```js
-age.until(18).pipe(cursor.each(function (data) {
-  console.log('Age: ', data.key, 'ID\'s: ', data.value);
-}, function (e) {
-  assert.equal(e,  null);
+age.until(18).pipe(cursor.each(function (key, value, data) {
+  console.log('Age: ', key, 'ID\'s: ', value);
+}, function () {
+  // end
 }));
 ```
 
@@ -235,10 +235,10 @@ returned indexes:
 ----
 
 ```js
-countries.until('P').pipe(cursor.each(function (data) {
-  console.log('Country: ', data.key, 'Documents: ', data.value);
-}, function (e) {
-  assert.equal(e,  null);
+countries.until('P').pipe(cursor.each(function (key, value, data) {
+  console.log('Country: ', key, 'Documents: ', value);
+}, function () {
+  // end
 }));
 ```
 
@@ -249,6 +249,23 @@ returned indexes:
 |  Algeria  |         `C`, `D`        |
 | Australia |           `A`           |
 |   Canada  | `A`, `B`, `C`, `D`, `E` |
+
+### `void` index.del(`string`/`number`: value, `*`: key, `function`: callback)
+
+```js
+age.put(18, 7, function (e) {
+  if(e) throw e;
+  console.log('index deleted successfully');
+});
+```
+----
+
+```js
+countries.put('Portugal', 'A', function (e) {
+  if(e) throw e;
+  console.log('index deleted successfully');
+});
+```
 
 ## test [![Build Status](https://travis-ci.org/kordon/range.png)](https://travis-ci.org/kordon/range)
 

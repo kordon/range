@@ -1,6 +1,6 @@
 {
   "name": "range-index",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "levelup based range index",
   "main": "src/range.js",
   "repository": {
@@ -19,11 +19,12 @@
   "dependencies": {
     "type-component": "0.0.x",
     "through": "2.1.x",
-    "levelup": "0.4.x",
+    "levelup": "0.5.x",
     "lodash": "1.0.x",
     "async": "0.1.x"
   },
   "devDependencies": {
+    "levelup-cursor": "0.3.x",
     "mocha": "1.7.x",
     "chai": "1.4.x",
     "sgen": "0.1.x"
