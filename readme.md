@@ -267,7 +267,11 @@ countries.put('Portugal', 'A', function (e) {
 });
 ```
 
-## test [![Build Status](https://travis-ci.org/kordon/range.png)](https://travis-ci.org/kordon/range)
+## test 
+
+[![Build Status](https://travis-ci.org/kordon/range.png)](https://travis-ci.org/kordon/range)
+
+[100% coverage 54 SLOC](http://f.cl.ly/items/0D250W230T0w323E0z2B/coverage.html)
 
 ```bash
 npm test

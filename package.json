@@ -8,7 +8,7 @@
     "url": "git@github.com:kordon/range.git"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha -u qunit -R spec"
+    "test": "make test"
   },
   "keywords": [
     "range",

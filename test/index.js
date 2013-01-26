@@ -1,8 +1,10 @@
+if(process.env['RANGE_COV']) var range = require('../src-cov/range')
+else var range = require('../')
+
 var cursor = require('levelup-cursor'),
     hex = require('../src/hex'),
     async = require('async'),
     chai = require('chai'),
-    range = require('../'),
     path = require('path'),
     sgen = require('sgen')
 
