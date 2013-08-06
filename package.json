@@ -1,6 +1,6 @@
 {
   "name": "range-index",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "levelup based range index",
   "main": "src/range.js",
   "repository": {

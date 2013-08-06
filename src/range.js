@@ -8,9 +8,9 @@ var middleman = require('./middleman'),
 var without = lodash.without,
     unique = lodash.uniq
 
-var put = function (task, callback) {
-  this.engine.get(task.key, function (e, value) {
-    if(e && e.name != 'NotFoundError') return callback(e)
+var put = function (task, self, callback) {
+  self.engine.get(task.key, function (e, value) {
+    if(e && e.name !== 'NotFoundError') return callback(e)
   
     if(!value) value = {}
     if(!value.documents) value.documents = []
@@ -18,13 +18,16 @@ var put = function (task, callback) {
     value.documents = unique(value.documents, true)
     value.keytype = task.keytype
   
-    this.engine.put(task.key, value, callback)
-  }.bind(this))
+    self.engine.put(task.key, value, callback)
+  })
 }
 
 var range = function (engine) {
-  this.queue = async.queue(put.bind(this), 1)
+  var self = this
   this.engine = engine
+  this.queue = async.queue(function (task, callback) {
+    put(task, self, callback)
+  }, 1)
 }
 
 range.prototype.put = function (value, key, callback) {
@@ -57,6 +60,7 @@ range.prototype.until = function (end) {
 
 range.prototype.del = function (value, key, callback) {
   var hexed = hex.to(value)
+  var self = this
   
   this.engine.get(hexed, function (e, value) {
     if(e && e.name != 'NotFoundError') return callback(e)
@@ -65,8 +69,8 @@ range.prototype.del = function (value, key, callback) {
     
     value.documents = without(value.documents, key)
       
-    this.engine.put(hexed, value, callback)
-  }.bind(this))
+    self.engine.put(hexed, value, callback)
+  })
 }
 
 range.prototype.close = function (callback) {
