@@ -2,7 +2,7 @@
 
 [level](https://github.com/level/level) based range index
 
-[![NPM version](https://badge.fury.io/js/range.png)](http://badge.fury.io/js/range-index)
+[![NPM version](https://badge.fury.io/js/range-index.png)](http://badge.fury.io/js/range-index)
 [![Build Status](https://secure.travis-ci.org/kordon/range.png)](http://travis-ci.org/kordon/range)
 [![Dependency Status](https://gemnasium.com/kordon/range.png)](https://gemnasium.com/kordon/range)
 [![Coverage Status](https://coveralls.io/repos/kordon/range/badge.png?branch=master)](https://coveralls.io/r/kordon/range?branch=master)
