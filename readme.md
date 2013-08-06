@@ -1,6 +1,11 @@
 # range
 
-[levelup](https://github.com/rvagg/node-levelup) based range index
+[level](https://github.com/level/level) based range index
+
+[![NPM version](https://badge.fury.io/js/range.png)](http://badge.fury.io/js/range-index)
+[![Build Status](https://secure.travis-ci.org/kordon/range.png)](http://travis-ci.org/kordon/range)
+[![Dependency Status](https://gemnasium.com/kordon/range.png)](https://gemnasium.com/kordon/range)
+[![Coverage Status](https://coveralls.io/repos/kordon/range/badge.png?branch=master)](https://coveralls.io/r/kordon/range?branch=master)
 
 ## install
 
@@ -253,7 +258,7 @@ returned indexes:
 ### `void` index.del(`string`/`number`: value, `*`: key, `function`: callback)
 
 ```js
-age.put(18, 7, function (e) {
+age.del(18, 7, function (e) {
   if(e) throw e;
   console.log('index deleted successfully');
 });
@@ -261,20 +266,10 @@ age.put(18, 7, function (e) {
 ----
 
 ```js
-countries.put('Portugal', 'A', function (e) {
+countries.del('Portugal', 'A', function (e) {
   if(e) throw e;
   console.log('index deleted successfully');
 });
-```
-
-## test 
-
-[![Build Status](https://travis-ci.org/kordon/range.png)](https://travis-ci.org/kordon/range)
-
-[100% coverage 54 SLOC](http://f.cl.ly/items/0D250W230T0w323E0z2B/coverage.html)
-
-```bash
-npm test
 ```
 
 ## license

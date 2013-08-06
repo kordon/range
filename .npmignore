@@ -1,0 +1,5 @@
+lib-cov
+coverage.cov
+notes.txt
+.coveralls.yml
+.travis.yml

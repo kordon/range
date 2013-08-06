@@ -1,6 +1,6 @@
 var middleman = require('./middleman'),
     lodash = require('lodash'),
-    levelup = require('levelup'),
+    level = require('level'),
     async = require('async'),
     path = require('path'),
     hex = require('./hex')
@@ -76,7 +76,7 @@ range.prototype.close = function (callback) {
 
 
 module.exports = function (location) {
-  var db = levelup(path.normalize(location), {
+  var db = level(path.normalize(location), {
     createIfMissing: true,
     valueEncoding: 'json',
     keyEncoding: 'utf8'

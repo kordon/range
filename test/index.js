@@ -92,15 +92,15 @@ suite('put')
 
 test('saved', function (callback) {
   var age = instance()
+  var doc = sgen.random()
   
-  age.put(12, sgen.random(), function () {
+  age.put(12, doc, function () {
     age.engine.get(hex.to(12), function (e, value, key) {
       assert.equal(e,  null)
       assert.ok(value)
       assert(value.documents instanceof Array)
       assert(value.documents.length == 1)
-      assert(key == '10000000C')
-      assert(hex.from({value: value, key: key}).key == 12)
+      assert(value.documents.pop() == doc)
       age.close(callback)
     })
   })
