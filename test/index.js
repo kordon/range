@@ -2,7 +2,7 @@ if(process.env['RANGE_COV']) var range = require('../lib-cov/range')
 else var range = require('../')
 
 var cursor = require('levelup-cursor'),
-    hex = require('../src/hex'),
+    bytewise = require('bytewise'),
     async = require('async'),
     chai = require('chai'),
     path = require('path'),
@@ -93,14 +93,14 @@ suite('put')
 test('saved', function (callback) {
   var age = instance()
   var doc = sgen.random()
-  
+
   age.put(12, doc, function () {
-    age.engine.get(hex.to(12), function (e, value, key) {
+    age.engine.get(bytewise.encode(12), function (e, value) {
       assert.equal(e,  null)
       assert.ok(value)
-      assert(value.documents instanceof Array)
-      assert(value.documents.length == 1)
-      assert(value.documents.pop() == doc)
+      assert(value instanceof Array)
+      assert(value.length === 1)
+      assert(value.pop() === doc)
       age.close(callback)
     })
   })
@@ -116,11 +116,11 @@ test('retrieved', function (callback) {
     cursor(age.get(12)).all(function (e, keys, values, data) {
       assert.equal(e,  null)
       assert(Object.keys(data).length == 1)
-      assert(data[keys[0]] == values[0])
+      assert(data[keys[0]] === values[0])
       assert(keys instanceof Array)
-      assert(values.length == 1)
-      assert(keys.length == 1)
-      assert(keys[0] == 12)
+      assert(values.length === 1)
+      assert(keys.length === 1)
+      assert(keys[0] === 12)
       age.close(callback)
     })
   })
@@ -171,7 +171,7 @@ test('order', function (callback) {
     }, function (e) {
       assert.equal(e,  null)
       keys.forEach(function (value, i) {
-        if(i == 0) return
+        if(i === 0) return
         assert(value >= keys[i-1])
       })
       

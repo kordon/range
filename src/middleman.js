@@ -1,13 +1,12 @@
 var through = require('through'),
-    hex = require('./hex')
+    bytewise = require('bytewise')
 
 module.exports = function (engine, start, end) {
   return engine.readStream({
     start: start,
     end: end
   }).pipe(through(function (data) {
-    data = hex.from(data)
-    data.value = data.value.documents
+    data.key = bytewise.decode(data.key)
     this.emit('data', data)
   }))
 }
