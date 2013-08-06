@@ -1,4 +1,4 @@
-if(process.env['RANGE_COV']) var range = require('../src-cov/range')
+if(process.env['RANGE_COV']) var range = require('../lib-cov/range')
 else var range = require('../')
 
 var cursor = require('levelup-cursor'),
