@@ -74,10 +74,16 @@ npm install [--save/--save-dev] range-index
 var range = require('range-index');
 ```
 
-### `index` range(string: `location`)
+### `index` range(level: `db`)
 
 ```js
-var age = range('path/to/location');
+var db = level('path/to/location', {
+  createIfMissing: true,
+  valueEncoding: 'json',
+  keyEncoding: 'binary' 
+})
+
+var age = range(db);
 ```
 
 ### `void` index.put(`string`/`number`: value, `*`: key, `function`: callback)

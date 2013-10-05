@@ -3,6 +3,7 @@ else var range = require('../')
 
 var cursor = require('levelup-cursor'),
     bytewise = require('bytewise'),
+    level = require('level'),
     async = require('async'),
     chai = require('chai'),
     path = require('path'),
@@ -19,7 +20,11 @@ var forEach = function (len, callback) {
 }
 
 var instance = function () {
-  return range(path.join(root, sgen.timestamp()))
+  return range(level(path.join(root, sgen.timestamp()), {
+    createIfMissing: true,
+    valueEncoding: 'json',
+    keyEncoding: 'binary' 
+  }))
 }
 
 var random = function () {

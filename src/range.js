@@ -20,7 +20,9 @@ var put = function (task, self, callback) {
   })
 }
 
-var range = function (engine) {
+var range = module.exports = function (engine) {
+  if(!(this instanceof range)) return new peers(engine)
+  
   var self = this
   this.engine = engine
   this.queue = async.queue(function (task, callback) {
@@ -74,12 +76,6 @@ range.prototype.close = function (callback) {
 }
 
 
-module.exports = function (location) {
-  var db = level(path.normalize(location), {
-    createIfMissing: true,
-    valueEncoding: 'json',
-    keyEncoding: 'binary'
-  })
-  
+module.exports = function (db) {
   return new range(db)
 }
