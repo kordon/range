@@ -1,6 +1,6 @@
 {
   "name": "range-index",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "levelup based range index",
   "main": "src/range.js",
   "repository": {
@@ -18,19 +18,19 @@
   "license": "MIT",
   "dependencies": {
     "type-component": "0.0.x",
-    "bytewise": "0.5.x",
+    "bytewise": "0.6.x",
     "through": "2.3.x",
-    "lodash": "1.3.x",
+    "lodash": "2.2.x",
     "async": "0.2.x"
   },
   "devDependencies": {
     "mocha-lcov-reporter": "0.0.x",
-    "levelup-cursor": "0.3.x",
+    "levelup-cursor": "0.4.x",
     "jscoverage": "0.3.x",
-    "coveralls": "2.1.x",
-    "mocha": "1.12.x",
-    "chai": "1.7.x",
+    "coveralls": "2.3.x",
+    "mocha": "1.13.x",
+    "chai": "1.8.x",
     "sgen": "0.1.x",
-    "level": "0.12.x"
+    "level": "0.17.x"
   }
 }
