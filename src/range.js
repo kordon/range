@@ -21,7 +21,7 @@ var put = function (task, self, callback) {
 }
 
 var range = module.exports = function (engine) {
-  if(!(this instanceof range)) return new peers(engine)
+  if(!(this instanceof range)) return new range(engine)
   
   var self = this
   this.engine = engine
